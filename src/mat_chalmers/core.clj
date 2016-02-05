@@ -16,6 +16,12 @@
 (defn tag= [tag]
   (tagp (partial = tag)))
 
+(defn attrp [attr pred]
+  (filter (comp pred (comp attr :attrs))))
+
+(defn attr= [attr value]
+  (attrp attr (partial = value)))
+
 (defn extract-menu [url]
   (->> (parse url)
        :content
@@ -47,7 +53,9 @@
     menus))
 
 (defn styles []
-  [:style (css {:pretty-print? false}
+  [:style (css {:pretty-print? false
+                :vendors ["webkit" "moz"]
+                :auto-prefix #{:columns :column-gap}}
                [:body {:background-color "#eee"
                        :color "#4d5152"
                        :box-sizing "border-box"
@@ -55,8 +63,8 @@
                        :margin 0
                        :padding 0}]
                [:* {:box-sizing "inherit"}]
-               [:#app {:display "flex"
-                       :flex-flow "row wrap"
+               [:#app {:columns "20rem"
+                       :column-gap 0
                        :padding "0.5rem"}]
                [:h3 {:font-weight "normal"
                      :font-size "1.5rem"
@@ -69,8 +77,11 @@
                      :margin 0}]
                [:li {:padding "0.2rem 0"}]
                [:article {:background-color "#fff"
+                          :display "inline-block"
+                          :-webkit-column-break-inside "avoid"
+                          :page-break-inside "avoid"
+                          :break-inside "avoid"
                           :border-radius "3px"
-                          :flex "0 1 auto"
                           :margin "0.5rem"
                           :box-shadow "0 1px 5px rgba(0, 0, 0, 0.16)"
                           :padding "0.5rem 1.5rem"}])])
