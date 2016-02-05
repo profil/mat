@@ -64,7 +64,7 @@
                        :padding 0}]
                [:* {:box-sizing "inherit"}]
                [:#app {:columns "20rem"
-                       :column-gap 0
+                       :column-gap "1rem"
                        :padding "0.5rem"}]
                [:h3 {:font-weight "normal"
                      :font-size "1.5rem"
@@ -78,6 +78,7 @@
                [:li {:padding "0.2rem 0"}]
                [:article {:background-color "#fff"
                           :display "inline-block"
+                          :width "100%"
                           :-webkit-column-break-inside "avoid"
                           :page-break-inside "avoid"
                           :break-inside "avoid"
