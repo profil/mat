@@ -64,8 +64,8 @@
                        :padding 0}]
                [:* {:box-sizing "inherit"}]
                [:#app {:columns "20rem"
-                       :column-gap "1rem"
-                       :padding "0.5rem"}]
+                       :column-gap 0
+                       :padding "1rem 0.5rem"}]
                [:h3 {:font-weight "normal"
                      :font-size "1.5rem"
                      :margin "0.3rem 0"}]
@@ -77,15 +77,14 @@
                      :margin 0}]
                [:li {:padding "0.2rem 0"}]
                [:article {:background-color "#fff"
-                          :display "inline-block"
-                          :width "100%"
                           :-webkit-column-break-inside "avoid"
                           :page-break-inside "avoid"
                           :break-inside "avoid"
                           :border-radius "3px"
-                          :margin "0.5rem"
+                          :margin "1.5rem 0.5rem"
                           :box-shadow "0 1px 5px rgba(0, 0, 0, 0.16)"
-                          :padding "0.5rem 1.5rem"}])])
+                          :padding "0.5rem 1.5rem"}
+                         [:&:first-child {:margin-top 0}] ])])
 
 (defn generate-html []
   (html5 [:head
