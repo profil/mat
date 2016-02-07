@@ -3,7 +3,8 @@
             [garden.core :refer [css]]
             [garden.stylesheet :refer [at-media]]
             [hiccup.page :refer [html5] :as p]
-            [hiccup.util :refer [escape-html]])
+            [hiccup.util :refer [escape-html]]
+            [ring.adapter.jetty :refer [run-jetty]])
   (:gen-class))
 
 (def text (comp (mapcat :content) (filter string?)))
@@ -114,3 +115,9 @@
   {:status 200
    :headers {"Content-Type" "text/html"}
    :body (generate-html)})
+
+(defn -main [& args]
+  (let [ip (get (System/getenv) "HTTP_IP" "0.0.0.0")
+        port (Integer/parseInt (get (System/getenv) "HTTP_PORT" "8080"))]
+    (run-jetty handler {:host ip
+                        :port port})))
