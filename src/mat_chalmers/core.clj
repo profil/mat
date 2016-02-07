@@ -111,13 +111,20 @@
                           menu)]])
                     (get-data))]]))
 
-(defn handler [request]
-  {:status 200
-   :headers {"Content-Type" "text/html"}
-   :body (generate-html)})
+(defn handler [atom-data]
+  (fn [request]
+    (let [{:keys [last-modified data]} @atom-data]
+      (when (> (- (System/currentTimeMillis) last-modified) 3600000)
+        (reset! atom-data {:data (generate-html)
+                           :last-modified (System/currentTimeMillis)}))
+      {:status 200
+       :headers {"Content-Type" "text/html"}
+       :body data})))
 
 (defn -main [& args]
   (let [ip (get (System/getenv) "OPENSHIFT_CLOJURE_HTTP_IP" "0.0.0.0")
-        port (Integer/parseInt (get (System/getenv) "OPENSHIFT_CLOJURE_HTTP_PORT" "8080"))]
-    (run-jetty handler {:host ip
-                        :port port})))
+        port (Integer/parseInt (get (System/getenv) "OPENSHIFT_CLOJURE_HTTP_PORT" "8080"))
+        atom-data (atom {:data (generate-html)
+                         :last-modified (System/currentTimeMillis)})]
+    (run-jetty (handler atom-data) {:host ip
+                                    :port port})))
