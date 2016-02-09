@@ -113,13 +113,16 @@
 
 (defn handler [atom-data]
   (fn [request]
-    (let [{:keys [last-modified data]} @atom-data]
-      (when (> (- (System/currentTimeMillis) last-modified) 3600000)
-        (reset! atom-data {:data (generate-html)
-                           :last-modified (System/currentTimeMillis)}))
-      {:status 200
-       :headers {"Content-Type" "text/html"}
-       :body data})))
+    (if (= (:uri request) "/")
+      (let [{:keys [last-modified data]} @atom-data]
+        (when (> (- (System/currentTimeMillis) last-modified) 3600000)
+          (reset! atom-data {:data (generate-html)
+                             :last-modified (System/currentTimeMillis)}))
+        {:status 200
+         :headers {"Content-Type" "text/html"}
+         :body data})
+      {:status 404
+       :body "Not found"})))
 
 (defn -main [& args]
   (let [ip (get (System/getenv) "OPENSHIFT_CLOJURE_HTTP_IP" "0.0.0.0")
