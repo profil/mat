@@ -14,26 +14,26 @@
          {:handler #(dispatch [:result %1])
           :error-handler #(dispatch [:error %1])
           :response-format :json})
-    (assoc db :loading? true)))
+    (assoc db :status :loading)))
 
 (register-handler
   :result
   (fn [db [_ res]]
     (-> db
         (assoc :result res)
-        (assoc :loading? false))))
+        (assoc :status :done))))
 
 (register-handler
   :error
   (fn [db [_ err]]
     (-> db
         (assoc :error err)
-        (assoc :loading? false))))
+        (assoc :status :error))))
 
 (register-sub
-  :loading
+  :status
   (fn [db]
-    (reaction (:loading @db))))
+    (reaction (:status @db))))
 
 (register-sub
   :result
@@ -41,17 +41,17 @@
     (reaction (:result @db))))
 
 (defn app []
-  (let [loading (subscribe [:loading])
+  (let [status (subscribe [:status])
         result (subscribe [:result])]
     (fn []
       [:div
-       (if @loading [:p "loading"] [:p "done"])
+       [:p (str @status)]
        [:button
         {:on-click #(dispatch [:refresh])}
         "reload"]
        [:ul
         (for [[n menu] @result]
-          ^{:key menu}
+          ^{:key n}
           [:li
            [:p (str n)]
            (for [[n dish] menu]
