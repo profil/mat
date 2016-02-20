@@ -30,14 +30,17 @@
                                                                zip/node))))
                         (take 1))
                   (iterate zip/next loc))
+          zip-day (some-> day
+                          zip/node
+                          zip/xml-zip)
           res (sequence
-                (comp (take-while (complement zip/end?))
+                (comp (take-while (every-pred some? (complement zip/end?)))
                       (filter #(= :p (:tag (zip/node %))))
                       (map #(string/replace (zip/node (zip/down %))
                                             "\u00A0" ""))
                       (filter (complement string/blank?))
                       (map #(list "Lunch" %)))
-                (iterate zip/next (zip/xml-zip (zip/node day))))]
+                (iterate zip/next zip-day))]
       res)))
 
 (defmethod parse-menu :default [[menu url]]
