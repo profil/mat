@@ -46,11 +46,15 @@
     res))
 
 (defn handler [request]
-  (if (= (:uri request) "/")
-    {:status 200
-     :headers {"Content-Type" "application/transit+json; charset=utf-8"
-               "Access-Control-Allow-Origin" "*"}
-     :body (json/write-str (get-data-memo menus))}
+  (condp = (:uri request)
+    "/" {:status 200
+         :headers {"Content-Type" "application/transit+json; charset=utf-8"
+                   "Access-Control-Allow-Origin" "*"}
+         :body (json/write-str (get-data-memo menus))}
+    "/available-feeds" {:status 200
+                        :headers {"Content-Type" "application/transit+json; charset=utf-8"
+                                  "Access-Control-Allow-Origin" "*"}
+                        :body (json/write-str (keys menus))}
     {:status 404
      :body "Not found"}))
 
