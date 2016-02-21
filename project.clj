@@ -18,7 +18,8 @@
   :figwheel {:css-dirs ["resources/public/css"]}
   :cljsbuild {:builds [{:id "dev"
                         :source-paths ["src"]
-                        :figwheel {:on-jsload "mat-chalmers.core/mount-root"}
+                        :figwheel {:on-jsload "mat-chalmers.core/mount-root"
+                                   :websocket-host "192.168.1.108"}
                         :compiler {:main mat-chalmers.core
                                    :asset-path "js/out"
                                    :output-to "resources/public/js/main.js"
