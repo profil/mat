@@ -1,7 +1,10 @@
 (ns mat-chalmers.core
   (:require [mat-chalmers.menu :refer [parse-menu]]
             [clojure.data.json :as json]
-            [org.httpkit.server :refer [run-server]])
+            [org.httpkit.server :refer [run-server]]
+            [ring.logger.timbre :as logger]
+            [taoensso.timbre :as timbre]
+            [taoensso.timbre.appenders.core :as appenders])
   (:gen-class))
 
 (defn memo-ttl [ttl f]
@@ -60,6 +63,13 @@
 
 (defn -main [& args]
   (let [ip (get (System/getenv) "OPENSHIFT_CLOJURE_HTTP_IP" "0.0.0.0")
-        port (Integer/parseInt (get (System/getenv) "OPENSHIFT_CLOJURE_HTTP_PORT" "8080"))]
-    (run-server handler {:ip ip
-                         :port port})))
+        port (Integer/parseInt (get (System/getenv) "OPENSHIFT_CLOJURE_HTTP_PORT" "8080"))
+        log-file (str (get (System/getenv) "OPENSHIFT_LOG_DIR" "./") "mat.log")]
+    (timbre/merge-config!
+      {:appenders {:spit (appenders/spit-appender {:fname log-file})
+                   :println {:enabled? false}}
+       :level :info})
+    (run-server
+      (logger/wrap-with-logger handler)
+      {:ip ip
+       :port port})))
